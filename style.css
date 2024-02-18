@@ -1,0 +1,114 @@
+
+#menu-div{
+    display:block;
+    position:relative;
+    height:30%;
+    width:100%;
+    background-color: #b116f6;
+    box-shadow: 0 0.5rem 1rem 0.5rem #9c19d7;
+    z-index:5;
+}
+
+    #search-bar-div
+    {
+        display: flex;
+        justify-content:space-around;
+        position:absolute;
+        top:50%;
+        left : 50%;
+        width:80%;
+        height:40%;
+        transform : translate(-50%, -50%);
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        
+    }
+    #search-bar
+    {
+        display:block;
+        position:relative;
+        width:80%;
+        height:100%;
+        border : 1px solid #d5d5d5;
+        border-radius: 1rem;
+        box-shadow:0 0 1rem #e4e4e4;
+        -webkit-transition: box-shadow 500ms linear;
+        -ms-transition: box-shadow 500ms linear;
+        transition: box-shadow 500ms linear;
+        padding-left:1rem;
+    }
+    #search-bar:hover
+    {
+        box-shadow:0 0 1rem #9dceff;
+    }
+    #search-button
+    {
+        background: none;
+	    color: inherit;
+	    border: none;
+	    padding: 0;
+	    font: inherit;
+	    cursor: pointer;
+	    outline: inherit;
+
+
+        position:relative;
+        height:2rem;
+        width:2rem;
+        top:50%;
+        transform : translate(0, -50%);
+        -webkit-transform: translate(0, -50%);
+        -ms-transform: translate(0, -50%);
+    }
+
+#graph-div{
+    display:block;
+    position:relative;
+    height:70%;
+    width:100%;
+    background-color:#d684fa;
+    bottom:0;
+}
+    #no-graph
+    {
+        height: fit-content;
+        width:fit-content;
+        margin:auto;
+        position:relative;
+        top:50%;
+        transform : translate(0, -50%);
+        -webkit-transform: translate(0, -50%);
+        -ms-transform: translate(0, -50%);
+    }
+
+#graph
+{
+    display:block;
+    width:50%;
+    height:80%;
+    margin:auto;
+    position:relative;
+    /*border:0.1rem solid black;*/
+    background-color:white;
+    top:10%;
+    padding:0.5rem;
+}
+
+button
+{
+    position:absolute;
+    background-color:"blue";
+    left: 0;
+    top:0;
+}
+
+body
+{
+    position:absolute;
+    margin: 0;
+    width:100%;
+    height:100%;
+    display:flex;
+    flex-direction: column;
+
+}
