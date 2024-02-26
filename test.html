@@ -1,23 +1,43 @@
 <html>
     <head>
         <link href="style.css" rel="stylesheet">
+        <!--jquery-->
         <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+        <!--d3-->
         <script type="text/javascript" src=https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js></script>
         <script src="https://d3js.org/d3.v4.js"></script>
-        <script src="https://kit.fontawesome.com/dee832aabd.js" crossorigin="anonymous"></script>
         <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
         <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+
+        <!--Font Awesome-->
+        <script src="https://kit.fontawesome.com/dee832aabd.js" crossorigin="anonymous"></script>
+
+        <!--jmsepath-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jmespath/0.14.0/jmespath.min.js"></script>
     </head>
     <body>
         <div id="menu-div">
-            <div id="search-bar-div">
-                <input type="text" id="search-bar" placeholder="Type something here">
+            <div id="search-div">
+                <div id="search-bar-div">
+                    <input type="text" id="search-bar" placeholder="Type something here">
+                    <dl id="search-suggestion-list">
+                    </dl>
+                </div>
+                
                 <button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
         <div id="graph-div">
+            <div id="graph-select-menu-div">
+                <div class="select-tab" id="select-line">Line</div>
+                <div class="select-tab" id="select-map">Map</div>
+            </div>
             <div id="no-graph" style="display:none">
                 Search for something to get started
+            </div>
+            <div id="no-result" style="display:none">
+                No movie found
             </div>
             <div id="graph">
 
@@ -25,10 +45,10 @@
         </div>
     </body>
     <script type="text/javascript" src="./geo.js"></script>
+    <script type="text/javascript" src="./data.js"></script>
+    <script type = "text/javascript" src="./trend.js"></script>
     <script type = "text/javascript" src="./funcs.js"></script>
-    <script type = "text/javascript" src="./google_api.js"></script>
+    
     <script>
-        draw("map");
-        $("#search-button").on("click", search)
     </script>
 </html>
