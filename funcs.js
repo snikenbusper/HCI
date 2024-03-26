@@ -20,17 +20,19 @@ function draw(kind, movie)
     $("#svg-graph").remove()
     const height = parseInt(d3.select("#graph").style("height"),10)
     const width = parseInt(d3.select("#graph").style("width"), 10)
-    const margin = { v: height / 10, h: width / 10 }
+    const margin = { v: height*3 / 25, h: width*3 / 25 }
     
-    const svg = d3.select("#graph")
+    var svg = d3.select("#graph")
         .append("svg")
             .attr("width", width)
             .attr("height", height)
             .attr("id", "svg-graph")
-        .append("g")
-            .attr("transform", `translate(${margin.h/2}, ${margin.v/2})`)
     
     if (kind == "select-line") {
+        svg = svg.append("g")
+            .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
+        
+        
         var data = trend.get_interest_over_time(movie)
 
         var timeFormat = d3.timeFormat("%Y");
@@ -40,13 +42,13 @@ function draw(kind, movie)
 
         svg.append("g")
             .call(d3.axisBottom(x).ticks(10, timeFormat))
-            .attr("transform", `translate(0, ${height - margin.v})`)
+            .attr("transform", `translate(0, ${height - (margin.v)})`)
     
         svg.append("g")
             .call(d3.axisLeft(y))
         
         const line = d3.line().x(d => x(d[0])).y(d => y(d[1]))
-        
+            
         svg.append("path")
             .datum(data)
             .attr("fill", "none")
@@ -57,7 +59,11 @@ function draw(kind, movie)
     else if (kind == "select-map")
     {
         var projection = d3.geoNaturalEarth1().scale(width / (2 * Math.PI)).translate([width / 2.5, height / 2.5])
+        var projection2 = d3.geoMercator().scale(60).center([0,20]).translate([(width+margin.h/2)/2, (height+margin.v/2)/2]);
         var geo = JSON.parse(geoData)
+
+        var colorScale = d3.scaleLinear().domain([0,100])
+        .range(d3.schemeYlOrRd[7]);
 
         svg.append("g")
         .attr("id", "map")
@@ -66,9 +72,10 @@ function draw(kind, movie)
         .enter().append("path")
             .attr("fill", "#69b3a2")
             .attr("d", d3.geoPath()
-                .projection(projection)
+                .projection(projection2)
             )
             .style("stroke", "#fff")
+            .attr()
     }
     
         
@@ -105,7 +112,8 @@ function search_suggestions(string)
 
 
 $(document).ready(() => {
-    window.addEventListener("resize", function () { draw(selectedGraph, trend.get_interest_over_time(currQuery)) })
+    var test = new Geo()
+    window.addEventListener("resize", function () { draw(selectedGraph, currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
 
     $("#search-button").on("click", search);

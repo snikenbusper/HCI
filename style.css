@@ -3,6 +3,7 @@
     display:block;
     position:relative;
     height:20%;
+    min-height:20%;
     width:100%;
     background-color: #b116f6;
     box-shadow: 0 0.5rem 1rem 0.5rem #9c19d7;
@@ -89,6 +90,7 @@
     display:block;
     position:relative;
     height:80%;
+    min-height:80%;
     width:100%;
     background-color:#d684fa;
     bottom:0;
@@ -145,14 +147,16 @@
 #graph
 {
     display:block;
-    width:50%;
-    height:70%;
+    width: 30rem;
+    height: 20rem;
     margin:auto;
     position:relative;
     /*border:0.1rem solid black;*/
     background-color:white;
     top:20%;
     padding:0.5rem;
+    min-height:18rem;
+    min-width:18rem;
 }
 
 button
@@ -171,6 +175,13 @@ body
     height:100%;
     display:flex;
     flex-direction: column;
+    min-height: 30rem;
+    min-width : 45rem;
+    background-color:#d684fa;
+}
 
+html
+{
+    overflow-y : auto;
 }
 
