@@ -58,6 +58,7 @@ function draw(kind, movie)
     }
     else if (kind == "select-map")
     {
+        trend.get_geo()
         var projection = d3.geoNaturalEarth1().scale(width / (2 * Math.PI)).translate([width / 2.5, height / 2.5])
         var projection2 = d3.geoMercator().scale(60).center([0,20]).translate([(width+margin.h/2)/2, (height+margin.v/2)/2]);
         var geo = JSON.parse(geoData)
