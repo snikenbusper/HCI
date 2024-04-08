@@ -2,11 +2,11 @@ class Trend
 {
     constructor()
     {
-        var geo = new Geo()
+        this.geo = new Geo()
         this.time_data = JSON.parse(time_data)
         this.all_movies = Object.keys(this.time_data)
         this.all_movies_lowercase = this.all_movies.map(s => { return s.toLowerCase() })
-        this.geo_data = geo.intesect_country_names
+        this.geo_data = this.geo.country_names
     }
 
     get_interest_over_time(movie)
@@ -28,8 +28,8 @@ class Trend
         return trend.all_movies.filter(x => x.toLowerCase().startsWith(string.toLowerCase())).slice(0, 5)
     }
 
-    get_geo()
+    get_geo(movie)
     {
-        console.log(this.geo_data)  
+        return this.geo.search_movie(movie) 
     }
 }

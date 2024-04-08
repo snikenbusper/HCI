@@ -58,25 +58,79 @@ function draw(kind, movie)
     }
     else if (kind == "select-map")
     {
-        trend.get_geo()
         var projection = d3.geoNaturalEarth1().scale(width / (2 * Math.PI)).translate([width / 2.5, height / 2.5])
         var projection2 = d3.geoMercator().scale(60).center([0,20]).translate([(width+margin.h/2)/2, (height+margin.v/2)/2]);
-        var geo = JSON.parse(geoData)
+        var geo_trend = trend.get_geo(movie)
+        
+        var trend_range = geo_trend[2]-geo_trend[1]
+        var colorScale = d3.scaleLinear().domain([-1, geo_trend[1], geo_trend[1] + (trend_range / 2), geo_trend[2]]).range(d3.schemeBlues[4]);
+        
+        var tooltip = d3.select("#graph")
+        .append("div")
+        .style("opacity", 0)
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-color", "grey")    
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style("width", "fit-content")
+        .style("position", "absolute")
 
-        var colorScale = d3.scaleLinear().domain([0,100])
-        .range(d3.schemeYlOrRd[7]);
+        let mouseOver = function(d) {
+            d3.selectAll(".Country")
+              .transition()
+              .duration(200)
+              .style("opacity", .5)
+            d3.select(this)
+              .transition()
+              .duration(200)
+                .style("opacity", 1)
+            tooltip
+                .style("opacity", 1)
+        }
+        
+        var mousemove = function(d) {
+            tooltip
+                .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
+                .style("left", (d3.mouse(this)[0]+70) + "px")
+                .style("top", (d3.mouse(this)[1]) + "px")
+          }
+        
+        let mouseLeave = function(d) {
+            d3.selectAll(".Country")
+                .transition()
+                .duration(200)
+                .style("opacity", .8)
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .style("stroke", "transparent")
+            tooltip
+                .style("opacity", 0)
+        }
+        
 
+        console.log(colorScale(geo_trend[0].features[3]))
+        
         svg.append("g")
-        .attr("id", "map")
-        .selectAll("path")
-        .data(geo.features)
-        .enter().append("path")
-            .attr("fill", "#69b3a2")
+            .attr("id", "map")
+            .selectAll("path")
+            .data(geo_trend[0].features)
+            .enter().append("path")
             .attr("d", d3.geoPath()
                 .projection(projection2)
             )
             .style("stroke", "#fff")
-            .attr()
+            .attr("fill", function (d) {
+                return colorScale(d.trend);
+            })
+            .attr("class", "Country")
+            .style("opacity", .8)
+            .on("mouseover", mouseOver )
+            .on("mouseleave", mouseLeave)
+            .on("mousemove", mousemove);
     }
     
         
