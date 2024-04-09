@@ -18,30 +18,34 @@
     </head>
     <body>
         <div id="menu-div">
+            <div id="logo-div">
+                <p id="logo">Cinetrend</p>
+            </div>
             <div id="search-div">
                 <div id="search-bar-div">
                     <input type="text" id="search-bar" placeholder="Type something here">
                     <dl id="search-suggestion-list">
                     </dl>
+                    <button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
-                
-                <button id="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
         <div id="graph-div">
-            <div id="graph-select-menu-div">
-                <div class="select-tab" id="select-line">Line</div>
-                <div class="select-tab" id="select-map">Map</div>
-            </div>
             <div id="no-graph" style="display:none">
                 Search for something to get started
             </div>
             <div id="no-result" style="display:none">
                 No movie found
             </div>
-            <div id="graph">
+            <div class="graph" id="line-graph">
 
             </div>
+            <div class="graph" id="cloropleth">
+
+            </div>
+        </div>
+        <div id="mow-div">
+            
         </div>
     </body>
     <script type="text/javascript" src="./geo_interest.js"></script>

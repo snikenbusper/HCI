@@ -12,128 +12,146 @@ var val = [3, 6, 8, 2, 5, 8]
 
 const trend = new Trend()
 
-var selectedGraph = "select-line";
-var currQuery = "";
+var currQuery = "Black Panther Movie";
 
-function draw(kind, movie)
-{    
-    $("#svg-graph").remove()
-    const height = parseInt(d3.select("#graph").style("height"),10)
-    const width = parseInt(d3.select("#graph").style("width"), 10)
-    const margin = { v: height*3 / 25, h: width*3 / 25 }
+function draw_line(movie)
+{
+    $("#svg-line-graph").remove()
+    const height = parseInt(d3.select("#line-graph").style("height"),10)
+    const width = parseInt(d3.select("#line-graph").style("width"), 10)
+    const margin = { v: height*6 / 25, h: width*5 / 25 }
     
-    var svg = d3.select("#graph")
+    var svg = d3.select("#line-graph")
         .append("svg")
             .attr("width", width)
             .attr("height", height)
-            .attr("id", "svg-graph")
+            .attr("id", "svg-line-graph")
     
-    if (kind == "select-line") {
-        svg = svg.append("g")
-            .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
-        
-        
-        var data = trend.get_interest_over_time(movie)
-
-        var timeFormat = d3.timeFormat("%Y");
-
-        const y = d3.scaleLinear().range([height - margin.v, 0]).domain([Math.min(...data.map(d=>d[1])), Math.max(...data.map(d=>d[1]))])
-        const x = d3.scaleTime().range([0, width - margin.h]).domain([Math.min(...data.map(d=>d[0])), Math.max(...data.map(d=>d[0]))]).nice()
-
-        svg.append("g")
-            .call(d3.axisBottom(x).ticks(10, timeFormat))
-            .attr("transform", `translate(0, ${height - (margin.v)})`)
+    svg = svg.append("g")
+        .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
     
-        svg.append("g")
-            .call(d3.axisLeft(y))
+    
+    var data = trend.get_interest_over_time(movie)
+
+    var timeFormat = d3.timeFormat("%Y");
+
+    const y = d3.scaleLinear().range([height - margin.v, 0]).domain([Math.min(...data.map(d=>d[1])), Math.max(...data.map(d=>d[1]))])
+    const x = d3.scaleTime().range([0, width - margin.h]).domain([Math.min(...data.map(d=>d[0])), Math.max(...data.map(d=>d[0]))]).nice()
+
+    svg.append("g")
+        .call(d3.axisBottom(x).ticks(10, timeFormat))
+        .attr("transform", `translate(0, ${height - (margin.v)})`)
+
+    svg.append("g")
+        .call(d3.axisLeft(y))
+    
+    const line = d3.line().x(d => x(d[0])).y(d => y(d[1]))
         
-        const line = d3.line().x(d => x(d[0])).y(d => y(d[1]))
-            
-        svg.append("path")
-            .datum(data)
-            .attr("fill", "none")
-            .attr("stroke", "steelblue")
-            .attr("stroke-width", 2)
-            .attr("d", line)
+    svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", line)
+
+}
+
+function draw_map(movie)
+{
+    $("#svg-map-graph").remove()
+    const height = parseInt(d3.select("#cloropleth").style("height"),10)
+    const width = parseInt(d3.select("#cloropleth").style("width"), 10)
+    const margin = { v: height*3 / 25, h: width*3 / 25 }
+    
+    var svg = d3.select("#cloropleth")
+        .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+        .attr("id", "svg-map-graph")
+    
+    var projection = d3.geoNaturalEarth1().scale(width / (2 * Math.PI)).translate([width / 2.5, height / 2.5])
+    var projection2 = d3.geoMercator().scale(60).center([20,20]).translate([(width+margin.h/2)/2, (height+margin.v/2)/2]);
+    var geo_trend = trend.get_geo(movie)
+    
+    var trend_range = geo_trend[2]-geo_trend[1]
+    var colorScale = d3.scaleLinear().domain([-1, geo_trend[1], geo_trend[1] + (trend_range / 2), geo_trend[2]]).range(d3.schemeBlues[4]);
+    
+    var tooltip = d3.select("#cloropleth")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-color", "grey")    
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "5px")
+    .style("width", "fit-content")
+    .style("position", "absolute")
+
+    let mouseOver = function(d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
+            .style("opacity", .5)
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .style("opacity", 1)
+        tooltip
+            .style("opacity", 1)
     }
-    else if (kind == "select-map")
-    {
-        var projection = d3.geoNaturalEarth1().scale(width / (2 * Math.PI)).translate([width / 2.5, height / 2.5])
-        var projection2 = d3.geoMercator().scale(60).center([0,20]).translate([(width+margin.h/2)/2, (height+margin.v/2)/2]);
-        var geo_trend = trend.get_geo(movie)
-        
-        var trend_range = geo_trend[2]-geo_trend[1]
-        var colorScale = d3.scaleLinear().domain([-1, geo_trend[1], geo_trend[1] + (trend_range / 2), geo_trend[2]]).range(d3.schemeBlues[4]);
-        
-        var tooltip = d3.select("#graph")
-        .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-color", "grey")    
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "5px")
-        .style("width", "fit-content")
-        .style("position", "absolute")
-
-        let mouseOver = function(d) {
-            d3.selectAll(".Country")
-              .transition()
-              .duration(200)
-              .style("opacity", .5)
-            d3.select(this)
-              .transition()
-              .duration(200)
-                .style("opacity", 1)
-            tooltip
-                .style("opacity", 1)
+    
+    var mousemove = function (d) {
+        console.log(d3.mouse(this))
+        tooltip
+            .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
+            .style("left", (d3.mouse(this)[0] + 475) + "px")
+            .style("top", (d3.mouse(this)[1]) + "px")
         }
-        
-        var mousemove = function(d) {
-            tooltip
-                .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
-                .style("left", (d3.mouse(this)[0]+70) + "px")
-                .style("top", (d3.mouse(this)[1]) + "px")
-          }
-        
-        let mouseLeave = function(d) {
-            d3.selectAll(".Country")
-                .transition()
-                .duration(200)
-                .style("opacity", .8)
-            d3.select(this)
-                .transition()
-                .duration(200)
-                .style("stroke", "transparent")
-            tooltip
-                .style("opacity", 0)
-        }
-        
-
-        console.log(colorScale(geo_trend[0].features[3]))
-        
-        svg.append("g")
-            .attr("id", "map")
-            .selectAll("path")
-            .data(geo_trend[0].features)
-            .enter().append("path")
-            .attr("d", d3.geoPath()
-                .projection(projection2)
-            )
-            .style("stroke", "#fff")
-            .attr("fill", function (d) {
-                return colorScale(d.trend);
-            })
-            .attr("class", "Country")
+    
+    let mouseLeave = function(d) {
+        d3.selectAll(".Country")
+            .transition()
+            .duration(200)
             .style("opacity", .8)
-            .on("mouseover", mouseOver )
-            .on("mouseleave", mouseLeave)
-            .on("mousemove", mousemove);
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .style("stroke", "transparent")
+        tooltip
+            .style("opacity", 0)
+            .style("left", 0)
     }
     
-        
+
+    console.log(colorScale(geo_trend[0].features[3]))
+    
+    svg.append("g")
+        .attr("id", "map")
+        .selectAll("path")
+        .data(geo_trend[0].features)
+        .enter().append("path")
+        .attr("d", d3.geoPath()
+            .projection(projection2)
+        )
+        .style("stroke", "#fff")
+        .attr("fill", function (d) {
+            return colorScale(d.trend);
+        })
+        .attr("class", "Country")
+        .style("opacity", .8)
+        .on("mouseover", mouseOver )
+        .on("mouseleave", mouseLeave)
+        .on("mousemove", mousemove);
+    
+}
+
+
+function draw(movie)
+{
+    draw_map(movie)
+    draw_line(movie)
 }
 
 
@@ -143,7 +161,7 @@ function search()
     if (trend.movie_exists(res))
     {
         currQuery = res
-        draw(selectedGraph, currQuery)
+        draw(currQuery)
     }
     $("#search-bar").val("")
 }
@@ -166,9 +184,14 @@ function search_suggestions(string)
 }
 
 
+
 $(document).ready(() => {
-    var test = new Geo()
-    window.addEventListener("resize", function () { draw(selectedGraph, currQuery) })
+    /* FOR TESTING */
+    draw(currQuery)
+
+    
+
+    window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
 
     $("#search-button").on("click", search);
@@ -183,19 +206,6 @@ $(document).ready(() => {
         {
             $("#search-suggestion-list").empty();
         }
-    })
-
-    var selected = $("#" + selectedGraph);
-    selected.addClass("selected-tab");
-    
-    $(".select-tab").on('click', (e) =>
-    {
-        selected.removeClass("selected-tab")
-        selected = $(e.target)
-        selected.addClass("selected-tab")
-        selectedGraph = selected.attr("id");
-
-        draw(selectedGraph, currQuery)
     })
 });
 
