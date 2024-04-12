@@ -1,15 +1,3 @@
-var data = [
-    { time: 1, val: 4 },
-    { time: 2, val: 3 }, 
-    { time: 3, val: 7 }, 
-    { time: 4, val: 2 }, 
-    { time: 5, val: 7 }, 
-    { time: 6, val: 9 }
-]
-
-var time = [1, 2, 3, 4, 5, 6]
-var val = [3, 6, 8, 2, 5, 8]
-
 const trend = new Trend()
 
 var currQuery = "Black Panther Movie";
@@ -103,7 +91,6 @@ function draw_map(movie)
     }
     
     var mousemove = function (d) {
-        console.log(d3.mouse(this))
         tooltip
             .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
             .style("left", (d3.mouse(this)[0] + 475) + "px")
@@ -144,9 +131,90 @@ function draw_map(movie)
         .on("mouseover", mouseOver )
         .on("mouseleave", mouseLeave)
         .on("mousemove", mousemove);
-    
 }
 
+
+function draw_top_week()
+{
+    var top_week_div = $("#top-week")
+                
+    var movies = trend.get_top_week(3)
+    for (let i = 0; i < 3; i++)
+    {
+        top_week_div.append(`
+        <div class="week-entry-div">
+            <img class="week-entry-poster">
+            <div class="week-entry-title-bar-div">
+                <p class="week-entry-title"></p>
+                <div class="week-entry-bar top-bar">
+                </div>
+                <div class="week-entry-bar-empty top-empty-bar">
+                </div>
+                <p class="imdb-score"></p>
+            </div>
+        </div>
+        `)
+    }
+    var i = 0
+    top_week_div.children("div[class='week-entry-div']").each(function () { 
+        var entry = $(this)
+        console.log(entry)
+        var img = $(entry.children()[0])
+        var title = $($(entry.children()[1]).children()[0])
+        var bar_div = $($(entry.children()[1]).children()[1])
+        var score_text = $($(entry.children()[1]).children()[3])
+
+        var score = parseFloat(movies[i].imdbRating.split(' ')[0])
+        var width = score * 9
+        
+        img.attr("src", movies[i].posterImage)
+        title.text(movies[i].title)
+        bar_div.css({ "width": width.toString() + '%' })
+        score_text.text(score.toString())
+        i++
+    })
+}
+
+function draw_worst_week()
+{
+    var worst_week_div = $("#worst-week")
+                
+    var movies = trend.get_worst_week(3)
+    for (let i = 0; i < 3; i++)
+    {
+        worst_week_div.append(`
+        <div class="week-entry-div">
+            <img class="week-entry-poster">
+            <div class="week-entry-title-bar-div">
+                <p class="week-entry-title"></p>
+                <div class="week-entry-bar worst-bar">
+                </div>
+                <div class="week-entry-bar-empty worst-empty-bar">
+                </div>
+                <p class="imdb-score"></p>
+            </div>
+        </div>
+        `)
+    }
+    var i = 0
+    worst_week_div.children("div[class='week-entry-div']").each(function () { 
+        var entry = $(this)
+        console.log(entry)
+        var img = $(entry.children()[0])
+        var title = $($(entry.children()[1]).children()[0])
+        var bar_div = $($(entry.children()[1]).children()[1])
+        var score_text = $($(entry.children()[1]).children()[3])
+
+        var score = parseFloat(movies[i].imdbRating.split(' ')[0])
+        var width = score * 9
+        
+        img.attr("src", movies[i].posterImage)
+        title.text(movies[i].title)
+        bar_div.css({ "width": width.toString() + '%' })
+        score_text.text(score.toString())
+        i++
+    })
+}
 
 function draw(movie)
 {
@@ -183,13 +251,15 @@ function search_suggestions(string)
     })
 }
 
-
-
-$(document).ready(() => {
+$(document).ready(async function() {
+    
+    /* MAKE WELOCME SCREEN*/
+    await trend.get_curr_movies()
+    
+    draw_top_week()
+    draw_worst_week()
     /* FOR TESTING */
     draw(currQuery)
-
-    
 
     window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })

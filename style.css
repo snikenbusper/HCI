@@ -82,6 +82,7 @@
         -webkit-transition: all 500ms linear;
         -ms-transition: all 500ms linear;
         transition: all 500ms linear;
+        z-index:2
     }
     .search-suggestion-item
     {
@@ -120,21 +121,25 @@
     width:100%;
     display:flex;
     flex-direction:row;
-    justify-content: space-around;
+    justify-content: space-between;
 }
-    .graph
-    {
-        border: 2px solid #ECEEF7;
-        box-shadow: 0px 20px 50px rgba(220, 224, 249, 0.5);
-        border-radius: 20px;
-    }
+.graph
+{
+    border: 2px solid #ECEEF7;
+    box-shadow: 0px 20px 50px rgba(220, 224, 249, 0.5);
+    border-radius: 20px;
+}
     #line-graph
     {
-        width:550px;
+        width:52%;
+        height:90%;
+        margin-left:20px;
     }
     #cloropleth
     {
-        width:400px;
+        width:40%;
+        height:90%;
+        margin-right:20px;
     }
 
 #mow-div
@@ -144,9 +149,129 @@
     bottom:0;
     height:40%;
     width:100%;
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
 }
+    #top-week
+    {
+        width:47%;
+        height:90%;
+        display:flex;
+        flex-direction:column;
+        margin-left:20px;
+    }
+    #worst-week
+    {
+        width:47%;
+        height:90%;
+        display:flex;
+        flex-direction:column;
+        margin-right:20px;
+    }
+    .week-title
+    {
+        height:15%;
+        width:100%;
+        margin-top:5px;
+        margin-bottom:0px;
+        margin-left: 15px;
+        position:relative;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 18px;
+        color: rgba(0, 0, 0, 0.5);
+    }
 
+    .week-entry-div
+    {
+        width:100%;
+        height:27%;
+        display:flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items:center;
+    }
 
+        .week-entry-poster
+        {
+            position:relative;
+            height:48px;
+            width:36px;
+            border-radius:6px;
+            font-family: 'Inter';
+            font-style: normal;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 18px;
+        }
+
+        .week-entry-title-bar-div
+        {
+            position:relative;
+            width:80%;
+            height:100%;
+            display:flex;
+            flex-direction: column;
+        }
+        .week-entry-title
+        {
+            position:relative;
+            margin:0;
+            height:50%;
+            width:100%;
+        }
+        .week-entry-bar-empty
+        {
+            position:absolute;
+            margin-top:5px;
+            margin-bottom:5px;
+            height:10px;
+            border-radius: 100px;
+            top:50%;
+            opacity:0.2;
+            width:90%;
+        }
+        .week-entry-bar
+        {
+            position:relative;
+            margin-top:5px;
+            margin-bottom:5px;
+            height:10px;
+            border-radius: 100px;   
+        }
+        .imdb-score
+        {
+            position:absolute;
+            font-family: 'Inter';
+            font-style: normal;
+            font-size: 14px;
+            line-height: 18px;
+            margin-top:0;
+            margin-bottom:0;
+            top:calc(50%);
+            left:95%;
+        }
+        .top-empty-bar
+        {
+            background:#2FEA9B;
+        }
+        .top-bar
+        {
+            background: linear-gradient(270deg, #2FEA9B 15.5%, #7FDD53 85.5%);
+        }
+        .worst-empty-bar
+        {
+            background:#FF4080 94.64%;
+        }
+        .worst-bar
+        {
+            background: linear-gradient(143.13deg, #FFBF1A 5.36%, #FF4080 94.64%);
+        }
+
+        
 
 
 #graph-select-menu-div

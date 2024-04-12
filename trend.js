@@ -32,4 +32,41 @@ class Trend
     {
         return this.geo.search_movie(movie) 
     }
+
+    async get_curr_movies()
+    {
+        const url = 'https://moviesverse1.p.rapidapi.com/top-box-office';
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': 'f6919426dfmshe6742c4699ee369p1753a1jsn489031a4b128',
+                'X-RapidAPI-Host': 'moviesverse1.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.text();
+            this.current_showing = JSON.parse(result);
+        } catch (error) {
+            alert("Problem getting recent movies")
+        }
+    }
+
+    get_top_week(top_x)
+    {
+        var movies = this.current_showing.movies
+        movies.sort((a, b) => { return parseFloat(b.imdbRating.split(' ')[0]) - parseFloat(a.imdbRating.split(' ')[0]) })
+        return movies.slice(0, top_x)
+    }
+
+    get_worst_week(top_x)
+    {
+        var movies = this.current_showing.movies
+        movies.sort((a, b) => { return parseFloat(a.imdbRating.split(' ')[0]) - parseFloat(b.imdbRating.split(' ')[0]) })
+        return movies.slice(0, top_x)
+    }
+
+    
+
 }
