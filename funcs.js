@@ -2,6 +2,44 @@ const trend = new Trend()
 
 var currQuery = "Black Panther Movie";
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+
+async function loading_screen(func)
+{
+    var loading = true;
+    var rotation = 0;
+    function loading_loop()
+    {
+        
+        setTimeout(() =>
+        {
+            rotation = (rotation+5)%361
+            $(".loading-circle").css("transform", "rotate("+rotation+"deg)");
+            if (loading)
+            {
+                loading_loop();
+            }
+        }, 100)
+    }
+    $("#loading-screen").css("display", "flex");
+    
+    loading_loop();
+    prep().then(() =>
+    {
+        loading = false;
+        $("#loading-screen").css("display", "none");
+    })
+    
+}
+function end_loading_screen()
+{
+
+}
+
+
 function draw_line(movie)
 {
     $("#svg-line-graph").remove()
@@ -76,24 +114,30 @@ function draw_map(movie)
     .style("padding", "5px")
     .style("width", "fit-content")
     .style("position", "absolute")
+    .style("z-index", "-1")
 
     let mouseOver = function(d) {
         d3.selectAll(".Country")
             .transition()
-            .duration(200)
+            .duration(100)
             .style("opacity", .5)
         d3.select(this)
             .transition()
-            .duration(200)
+            .duration(100)
             .style("opacity", 1)
         tooltip
             .style("opacity", 1)
+            .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
+            .style("z-index", 2)
+            .style("left", "calc( 45% + " + d3.mouse(this)[0] + "px )")
+            .style("top", (d3.mouse(this)[1] + 10) + "px")
+        console.log(d3.mouse(this))
     }
     
     var mousemove = function (d) {
         tooltip
             .html("Country : " + d.properties.name + "<br>Popularity : " + d.trend)
-            .style("left", (d3.mouse(this)[0] + 475) + "px")
+            .style("left", "calc( 58% + " + d3.mouse(this)[0] + "px )")
             .style("top", (d3.mouse(this)[1]) + "px")
         }
     
@@ -109,6 +153,7 @@ function draw_map(movie)
         tooltip
             .style("opacity", 0)
             .style("left", 0)
+            .style("z-index", -1)
     }
     
 
@@ -130,7 +175,9 @@ function draw_map(movie)
         .style("opacity", .8)
         .on("mouseover", mouseOver )
         .on("mouseleave", mouseLeave)
-        .on("mousemove", mousemove);
+        
+    //.on("mousemove", mousemove);
+    
 }
 
 
@@ -250,16 +297,21 @@ function search_suggestions(string)
         $("#search-button").click();
     })
 }
-
-$(document).ready(async function() {
-    
-    /* MAKE WELOCME SCREEN*/
-    await trend.get_curr_movies()
-    
+async function prep()
+{
+    await trend.get_curr_movies();
     draw_top_week()
     draw_worst_week()
-    /* FOR TESTING */
     draw(currQuery)
+    await sleep(2000)
+}
+$(document).ready(async function () {
+    
+    /* MAKE WELOCME SCREEN*/
+    
+    await loading_screen(prep);
+    
+    /* FOR TESTING */
 
     window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
@@ -278,56 +330,3 @@ $(document).ready(async function() {
         }
     })
 });
-
-
-/*
-function scatter(x, y, div)
-{
-    d3
-    const real_x = x;
-    const real_y = y;
-    var graph = $("#" + div)
-    
-    var width = graph.width()
-    var height = graph.height()
-
-    var min_x = Math.min(...x)
-    var max_x = Math.max(...x)
-    var min_y = Math.min(...y)
-    var max_y = Math.max(...y)
-
-    var buffer_x = width / 20
-    var buffer_y = width / 20
-
-    var w = width - 2 * buffer_x
-    var h = height - 2 * buffer_y
-
-    if (min_x < 0)
-    {
-        x.forEach((element, idx) => { x[idx] += Math.abs(min_x) })
-    }
-    if (min_y < 0) {
-        y.forEach((element, idx) => { x[idx] += Math.abs(min_y)})
-    }
-    
-
-    var x_range = max_x - min_x
-    var y_range = max_y - min_y
-    
-
-    alert(max_y)
-    var scalar_x = w / x_range
-    var scalar_y = h / y_range
-
-    var point = $('<div class="point" style="position:absolute;background-color:black;height:5px;width:5px;border-radius:50%"></div>')
-    x.forEach((element, i) =>
-    { 
-        let curr = point.clone()
-        curr.css('bottom', y[i])
-        curr.css('left', x[i])
-        graph.append(curr)
-    })
-
-    
-}
-*/
