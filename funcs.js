@@ -7,7 +7,7 @@ function sleep(ms) {
 }
 
 
-async function loading_screen(func)
+async function loading_screen(func, args)
 {
     var loading = true;
     var rotation = 0;
@@ -27,18 +27,23 @@ async function loading_screen(func)
     $("#loading-screen").css("display", "flex");
     
     loading_loop();
-    prep().then(() =>
+    if (args != null) {
+        func(args).then(() => {
+            loading = false;
+            $("#loading-screen").css("display", "none");
+        })
+    }
+    else
     {
-        loading = false;
-        $("#loading-screen").css("display", "none");
-    })
+        func().then(() =>
+            {
+                loading = false;
+                $("#loading-screen").css("display", "none");
+            })
+    }
+    
     
 }
-function end_loading_screen()
-{
-
-}
-
 
 function draw_line(movie)
 {
@@ -263,20 +268,21 @@ function draw_worst_week()
     })
 }
 
-function draw(movie)
+async function draw(movie)
 {
     draw_map(movie)
     draw_line(movie)
+    await sleep(1000);
 }
 
 
-function search()
+async function search()
 {
     var res = $("#search-bar").val();
     if (trend.movie_exists(res))
     {
         currQuery = res
-        draw(currQuery)
+        await loading_screen(draw ,currQuery)
     }
     $("#search-bar").val("")
 }
@@ -302,8 +308,7 @@ async function prep()
     await trend.get_curr_movies();
     draw_top_week()
     draw_worst_week()
-    draw(currQuery)
-    await sleep(2000)
+    await draw(currQuery)
 }
 $(document).ready(async function () {
     
@@ -316,7 +321,7 @@ $(document).ready(async function () {
     window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
 
-    $("#search-button").on("click", search);
+    await $("#search-button").on("click", search);
     $("#search-bar").on("input focus", (e) =>
     {
         search_suggestions($(e.target).val());
