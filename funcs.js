@@ -1,6 +1,6 @@
 const trend = new Trend()
 
-var currQuery = "Black Panther Movie";
+var currQuery = "";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -268,33 +268,48 @@ function draw_worst_week()
     })
 }
 
-async function draw(movie)
-{
-    draw_map(movie)
-    draw_line(movie)
-    await sleep(1000);
+async function draw(movie) {
+    if (movie == "") {
+        $(".chart").css({ "display": "none" })
+        $("#no-result").css({ "display": "none" })
+        $("#no-graph").css({ "display": "block" })
+    }
+    else
+    {
+        $(".chart").css({ "display": "block" })
+        $("#no-result").css({ "display": "none" })
+        $("#no-graph").css({ "display": "none" })
+        
+        draw_map(movie)
+        draw_line(movie)
+        await sleep(1000);
+    }
+    
 }
 
 
-async function search()
-{
+async function search() {
     var res = $("#search-bar").val();
-    if (trend.movie_exists(res))
-    {
+    if (trend.movie_exists(res)) {
         currQuery = res
-        await loading_screen(draw ,currQuery)
+        await loading_screen(draw, currQuery)
+    }
+    else
+    {
+        $(".chart").css({ "display": "none" })
+        $("#no-result").css({ "display": "block" })
+        $("#no-graph").css({ "display": "none" })
     }
     $("#search-bar").val("")
 }
 
 
-function search_suggestions(string)
-{
+function search_suggestions(string) {
     var suggestion_list = $("#search-suggestion-list")
+    suggestion_list.css({ "display": "block" })
     var suggestion = trend.match_string(string)
     suggestion_list.empty()
-    for (let i = 0; i < suggestion.length;  i++)
-    {
+    for (let i = 0; i < suggestion.length; i++) {
         suggestion_list.append(`<dt class="search-suggestion-item">${suggestion[i]}</dt>`)
     }
     $(".search-suggestion-item").on('click', (e) => {
@@ -302,6 +317,11 @@ function search_suggestions(string)
         $("#search-bar").val($(e.target).text());
         $("#search-button").click();
     })
+    
+    if (suggestion_list[0].children.length == 0)
+    {
+        suggestion_list.css({ "display": "none" })
+    }
 }
 async function prep()
 {
@@ -312,11 +332,9 @@ async function prep()
 }
 $(document).ready(async function () {
     
-    /* MAKE WELOCME SCREEN*/
-    
+    currQuery = ""
+    $("#search-bar").prop("value", currQuery)
     await loading_screen(prep);
-    
-    /* FOR TESTING */
 
     window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
@@ -332,6 +350,7 @@ $(document).ready(async function () {
         if (!($(e.target).is("#search-bar") || $(e.target).is("#search-suggestion-list")))
         {
             $("#search-suggestion-list").empty();
+            $("#search-suggestion-list").css({"display":"none"})
         }
     })
 });
