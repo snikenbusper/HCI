@@ -77,7 +77,87 @@ function draw_line(movie)
         .call(d3.axisLeft(y))
     
     const line = d3.line().x(d => x(d[0])).y(d => y(d[1]))
+    
+
+    var tooltip = d3.select("#line-graph")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-color", "grey")    
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style("width", "fit-content")
+        .style("position", "absolute")
+        .style("display", "none")
+        .style("z-index", 2)
+
+    const circle = svg.append("circle")
+        .attr("r", 0)
+        .attr("fill", "steelblue")
+        .style("stroke", "white")
+        .attr("opacity", .70)
+        .style("pointer-events", "none");
+
+    const listeningRect = svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("opacity", 0);
+    
+    listeningRect.on("mousemove", function () {
+        const x_coord = d3.mouse(this)[0];
+        const bisectDate = d3.bisector(d => d[0]).left;
+        const date = x.invert(x_coord);
+        const i = bisectDate(data, date, 1);
+        const d_prev = data[i - 1];
+        const d_next = data[i];
+        const d = d_next == undefined ? d_prev : (d_prev == undefined) ? d_next : ((date - d_prev[0]) > (d_next[0] - date) ? d_next : d_prev);
+        const xPos = x(d[0]);
+        const yPos = y(d[1]);
+
+        console.log(xPos)
+
+        circle.attr("cx", xPos)
+        .attr("cy", yPos);
+
+        circle.transition()
+        .duration(50)
+        .attr("r", 5);
         
+        
+        tooltip.style("display", "block")
+        .html("Trend score : " + d[1] + "<br>Date : " + d[0].toLocaleDateString("en-US"))
+        .style("left", `${xPos + 100}px`)
+        .style("top", `${yPos + 50}px`)
+    })
+
+    
+    listeningRect.on("mouseleave", function () {
+        circle.transition()
+          .duration(50)
+          .attr("r", 0);
+    
+        tooltip.style("display", "none");
+      });
+
+    let mouseOver = function (d)
+    {
+        tooltip
+            .style("opacity", 1)
+            .html("test")
+            .style("z-index", 2)
+            .style("left", d3.mouse(this)[0] + "px")
+            .style("top", (d3.mouse(this)[1] + 10) + "px")
+    }
+
+    let mouseLeave = function(d) {
+        tooltip
+            .style("opacity", 0)
+            .style("left", 0)
+            .style("z-index", -1)
+    }
+
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
