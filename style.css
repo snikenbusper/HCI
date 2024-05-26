@@ -112,59 +112,61 @@
         margin:0 2rem;
         align-items: center;
     }
-        #search-bar-div
-        {
-            display:block;
-            position:relative;
-            width:100%;
-            height:50%;
-        }
-        #search-bar
-        {
-            position : relative;
-            width : 100%;
-            height : 100%;
-            border : 1px solid #d5d5d5;
-            border-radius: 1rem;
-            box-shadow:0 0 1rem #e4e4e4;
-            -webkit-transition: box-shadow 500ms linear;
-            -ms-transition: box-shadow 500ms linear;
-            transition: box-shadow 500ms linear;
-            padding-left:1rem;
-        }
-        #search-bar:hover
-        {
-            box-shadow:0 0 1rem #9dceff;
-        }
-        #search-suggestion-list
-        {
-            margin:0;
-            position:absolute;
-            background-color: white;
-            height : fit-content;
-            width : 100%;
-            border-radius: 0.3rem;
-            top : calc(100% + 0.5rem);
-            -webkit-transition: all 500ms linear;
-            -ms-transition: all 500ms linear;
-            transition: all 500ms linear;
-            z-index:2
-        }
-        .search-suggestion-item
-        {
-            height : 1.2rem;
-            margin : 0.2rem 0;
-            margin-left : 1rem;
-        }
-        #search-button
-        {
-            background: none;
-            color: inherit;
-            border: none;
-            padding: 0;
-            font: inherit;
-            cursor: pointer;
-            outline: inherit;
+    #search-bar-div
+    {
+        display:block;
+        position:relative;
+        width:100%;
+        height:50%;
+    }
+    #search-bar
+    {
+        position : relative;
+        width : 100%;
+        height : 100%;
+        border : 1px solid #d5d5d5;
+        border-radius: 1rem;
+        box-shadow:0 0 1rem #e4e4e4;
+        -webkit-transition: box-shadow 500ms linear;
+        -ms-transition: box-shadow 500ms linear;
+        transition: box-shadow 500ms linear;
+        padding-left:1rem;
+    }
+    #search-bar:hover
+    {
+        box-shadow:0 0 1rem #9dceff;
+    }
+    #search-suggestion-list
+    {
+        margin:0;
+        position:absolute;
+        background-color: white;
+        height : fit-content;
+        width : 100%;
+        border-radius: 0.3rem;
+        top : calc(100% + 0.5rem);
+        outline :rgba(220, 224, 249, 0.5) 1px solid ;
+        box-shadow: 0 0 2px 2px rgba(220, 224, 249, 0.5);
+        -webkit-transition: all 500ms linear;
+        -ms-transition: all 500ms linear;
+        transition: all 500ms linear;
+        z-index:2
+    }
+    .search-suggestion-item
+    {
+        height : 1.2rem;
+        margin : 0.2rem 0;
+        margin-left : 1rem;
+    }
+    #search-button
+    {
+        background: none;
+	    color: inherit;
+	    border: none;
+	    padding: 0;
+	    font: inherit;
+	    cursor: pointer;
+	    outline: inherit;
 
 
             position:absolute;
@@ -351,71 +353,22 @@
         }
 
         
-
-
-#graph-select-menu-div
+#no-graph
 {
-    position:absolute;
-    display:flex;
-    border-bottom:1px solid grey;
-    justify-content: center;
-    flex-direction : row;
-    align-items: flex-end;
-    width : fit-content;
-    padding: 0 1rem;
-    top : 10%;
-    left : 50%;
-    transform : translate(-50%, 0);
-    -webkit-transform: translate(-50%, 0);
-    -ms-transform: translate(-50%, 0);
-}
-
-.select-tab
-{
-    position:relative;
-    border-top-left-radius : 0.5rem;
-    border-top-right-radius : 0.5rem;
-    border:1px solid gray;
-    border-bottom:none;
+    height: fit-content;
     width:fit-content;
-    height:1.2rem;
-    padding : 0 1rem;
-    text-align: center;
-}
-
-.selected-tab
-{
-    padding : 0 1.2rem;
-    padding-top : 0.2rem;
-}
-
-    #no-graph
-    {
-        height: fit-content;
-        width:fit-content;
-        margin:auto;
-        position:relative;
-        top:50%;
-        transform : translate(0, -50%);
-        -webkit-transform: translate(0, -50%);
-        -ms-transform: translate(0, -50%);
-    }
-
-#graph
-{
-    display:block;
-    width: 30rem;
-    height: 20rem;
     margin:auto;
     position:relative;
-    /*border:0.1rem solid black;*/
-    background-color:white;
-    top:20%;
-    padding:0.5rem;
-    min-height:18rem;
-    min-width:18rem;
+    color: rgba(0, 0, 0, 0.5);
 }
-
+#no-result
+{
+    height: fit-content;
+    width:fit-content;
+    margin:auto;
+    position:relative;
+    color: rgba(0, 0, 0, 0.5);
+}
 button
 {
     position:absolute;

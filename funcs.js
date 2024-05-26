@@ -1,6 +1,6 @@
 const trend = new Trend()
 
-var currQuery = "Black Panther Movie";
+var currQuery = "";
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -77,7 +77,87 @@ function draw_line(movie)
         .call(d3.axisLeft(y))
     
     const line = d3.line().x(d => x(d[0])).y(d => y(d[1]))
+    
+
+    var tooltip = d3.select("#line-graph")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("background-color", "white")
+        .style("border", "solid")
+        .style("border-color", "grey")    
+        .style("border-width", "1px")
+        .style("border-radius", "5px")
+        .style("padding", "5px")
+        .style("width", "fit-content")
+        .style("position", "absolute")
+        .style("display", "none")
+        .style("z-index", 2)
+
+    const circle = svg.append("circle")
+        .attr("r", 0)
+        .attr("fill", "steelblue")
+        .style("stroke", "white")
+        .attr("opacity", .70)
+        .style("pointer-events", "none");
+
+    const listeningRect = svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("opacity", 0);
+    
+    listeningRect.on("mousemove", function () {
+        const x_coord = d3.mouse(this)[0];
+        const bisectDate = d3.bisector(d => d[0]).left;
+        const date = x.invert(x_coord);
+        const i = bisectDate(data, date, 1);
+        const d_prev = data[i - 1];
+        const d_next = data[i];
+        const d = d_next == undefined ? d_prev : (d_prev == undefined) ? d_next : ((date - d_prev[0]) > (d_next[0] - date) ? d_next : d_prev);
+        const xPos = x(d[0]);
+        const yPos = y(d[1]);
+
+        console.log(xPos)
+
+        circle.attr("cx", xPos)
+        .attr("cy", yPos);
+
+        circle.transition()
+        .duration(50)
+        .attr("r", 5);
         
+        
+        tooltip.style("display", "block")
+        .html("Trend score : " + d[1] + "<br>Date : " + d[0].toLocaleDateString("en-US"))
+        .style("left", `${xPos + 100}px`)
+        .style("top", `${yPos + 50}px`)
+    })
+
+    
+    listeningRect.on("mouseleave", function () {
+        circle.transition()
+          .duration(50)
+          .attr("r", 0);
+    
+        tooltip.style("display", "none");
+      });
+
+    let mouseOver = function (d)
+    {
+        tooltip
+            .style("opacity", 1)
+            .html("test")
+            .style("z-index", 2)
+            .style("left", d3.mouse(this)[0] + "px")
+            .style("top", (d3.mouse(this)[1] + 10) + "px")
+    }
+
+    let mouseLeave = function(d) {
+        tooltip
+            .style("opacity", 0)
+            .style("left", 0)
+            .style("z-index", -1)
+    }
+
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
@@ -268,33 +348,48 @@ function draw_worst_week()
     })
 }
 
-async function draw(movie)
-{
-    draw_map(movie)
-    draw_line(movie)
-    await sleep(1000);
+async function draw(movie) {
+    if (movie == "") {
+        $(".chart").css({ "display": "none" })
+        $("#no-result").css({ "display": "none" })
+        $("#no-graph").css({ "display": "block" })
+    }
+    else
+    {
+        $(".chart").css({ "display": "block" })
+        $("#no-result").css({ "display": "none" })
+        $("#no-graph").css({ "display": "none" })
+        
+        draw_map(movie)
+        draw_line(movie)
+        await sleep(1000);
+    }
+    
 }
 
 
-async function search()
-{
+async function search() {
     var res = $("#search-bar").val();
-    if (trend.movie_exists(res))
-    {
+    if (trend.movie_exists(res)) {
         currQuery = res
-        await loading_screen(draw ,currQuery)
+        await loading_screen(draw, currQuery)
+    }
+    else
+    {
+        $(".chart").css({ "display": "none" })
+        $("#no-result").css({ "display": "block" })
+        $("#no-graph").css({ "display": "none" })
     }
     $("#search-bar").val("")
 }
 
 
-function search_suggestions(string)
-{
+function search_suggestions(string) {
     var suggestion_list = $("#search-suggestion-list")
+    suggestion_list.css({ "display": "block" })
     var suggestion = trend.match_string(string)
     suggestion_list.empty()
-    for (let i = 0; i < suggestion.length;  i++)
-    {
+    for (let i = 0; i < suggestion.length; i++) {
         suggestion_list.append(`<dt class="search-suggestion-item">${suggestion[i]}</dt>`)
     }
     $(".search-suggestion-item").on('click', (e) => {
@@ -302,6 +397,11 @@ function search_suggestions(string)
         $("#search-bar").val($(e.target).text());
         $("#search-button").click();
     })
+    
+    if (suggestion_list[0].children.length == 0)
+    {
+        suggestion_list.css({ "display": "none" })
+    }
 }
 async function prep()
 {
@@ -312,11 +412,9 @@ async function prep()
 }
 $(document).ready(async function () {
     
-    /* MAKE WELOCME SCREEN*/
-    
+    currQuery = ""
+    $("#search-bar").prop("value", currQuery)
     await loading_screen(prep);
-    
-    /* FOR TESTING */
 
     window.addEventListener("resize", function () { draw(currQuery) })
     window.addEventListener("load", () => { $("#search-bar").val("") })
@@ -332,6 +430,7 @@ $(document).ready(async function () {
         if (!($(e.target).is("#search-bar") || $(e.target).is("#search-suggestion-list")))
         {
             $("#search-suggestion-list").empty();
+            $("#search-suggestion-list").css({"display":"none"})
         }
     })
 });
