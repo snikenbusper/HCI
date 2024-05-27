@@ -33,6 +33,29 @@ class Trend
         return this.geo.search_movie(movie) 
     }
 
+    async get_movie_overview(movie)
+    {
+        //http://www.omdbapi.com/?apikey=[yourkey]&
+        const url = "http://www.omdbapi.com/?apikey=7f65a9b3&t=" + movie
+        const options =
+            {   
+                methodP:'GET'
+        }
+        
+        try {
+            const response = await fetch(url, options)
+            const result = await response.text()
+            const res = JSON.parse(result)
+            console.log(res)
+            return res;
+        } catch (error)
+        {
+            console.log(error)
+            alert("Something went wrong when getting movie data")
+        }
+
+    }
+
     async get_curr_movies()
     {
         const url = 'https://moviesverse1.p.rapidapi.com/top-box-office';

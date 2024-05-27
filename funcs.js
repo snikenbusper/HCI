@@ -1,6 +1,11 @@
 const trend = new Trend()
 
+
+var graph_div = $("#graph-div")
+var mow_div = $("#mow-div")
+var overview_div = $("movie-overview-div")
 var currQuery = "";
+var currMenu = overview_div;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -116,8 +121,6 @@ function draw_line(movie)
         const xPos = x(d[0]);
         const yPos = y(d[1]);
 
-        console.log(xPos)
-
         circle.attr("cx", xPos)
         .attr("cy", yPos);
 
@@ -216,7 +219,6 @@ function draw_map(movie)
             .style("z-index", 2)
             .style("left", "calc( 45% + " + d3.mouse(this)[0] + "px )")
             .style("top", (d3.mouse(this)[1] + 10) + "px")
-        console.log(d3.mouse(this))
     }
     
     var mousemove = function (d) {
@@ -242,7 +244,6 @@ function draw_map(movie)
     }
     
 
-    console.log(colorScale(geo_trend[0].features[3]))
     
     svg.append("g")
         .attr("id", "map")
@@ -271,6 +272,7 @@ function draw_top_week()
     var top_week_div = $("#top-week")
                 
     var movies = trend.get_top_week(3)
+    console.log(movies)
     for (let i = 0; i < 3; i++)
     {
         top_week_div.append(`
@@ -290,7 +292,6 @@ function draw_top_week()
     var i = 0
     top_week_div.children("div[class='week-entry-div']").each(function () { 
         var entry = $(this)
-        console.log(entry)
         var img = $(entry.children()[0])
         var title = $($(entry.children()[1]).children()[0])
         var bar_div = $($(entry.children()[1]).children()[1])
@@ -331,7 +332,6 @@ function draw_worst_week()
     var i = 0
     worst_week_div.children("div[class='week-entry-div']").each(function () { 
         var entry = $(this)
-        console.log(entry)
         var img = $(entry.children()[0])
         var title = $($(entry.children()[1]).children()[0])
         var bar_div = $($(entry.children()[1]).children()[1])
@@ -351,14 +351,14 @@ function draw_worst_week()
 async function draw(movie) {
     if (movie == "") {
         $(".chart").css({ "display": "none" })
-        $("#no-result").css({ "display": "none" })
-        $("#no-graph").css({ "display": "block" })
+        $(".default-res").css({ "display": "block" })
+        $(".no-result").css({ "display": "none" })
     }
     else
     {
         $(".chart").css({ "display": "block" })
-        $("#no-result").css({ "display": "none" })
-        $("#no-graph").css({ "display": "none" })
+        $(".default-res").css({ "display": "none" })
+        $(".no-result").css({ "display": "none" })
         
         draw_map(movie)
         draw_line(movie)
@@ -367,19 +367,75 @@ async function draw(movie) {
     
 }
 
-
-async function search() {
-    var res = $("#search-bar").val();
-    if (trend.movie_exists(res)) {
-        currQuery = res
-        await loading_screen(draw, currQuery)
+async function draw_overview(movie)
+{
+    if (movie == "") {
+        $("#overview-text-div").css({ "display": "none" })
+        $("#overview-poster-div").css({ "display": "none" })
+        $(".default-res").css({ "display": "block" })
+        $(".no-result").css({ "display": "none" })
     }
     else
     {
-        $(".chart").css({ "display": "none" })
-        $("#no-result").css({ "display": "block" })
-        $("#no-graph").css({ "display": "none" })
+
+        $("#overview-text-div").css({ "display": "flex" })
+        $("#overview-poster-div").css({ "display": "flex" })
+        $(".default-res").css({ "display": "none" })
+        $(".no-result").css({ "display": "none" })
+        
+        var res = await trend.get_movie_overview(movie)
+        console.log(res)
+        var title = res["Title"]
+        var poster = res["Poster"]
+        var released = res["Released"]
+        var runtime = res["Runtime"]
+        var genres = res["Genre"]
+        var synopsis = res["Plot"]
+        var imdb = res["imdbRating"]
+
+        var img_el = $(".movie-overview-poster")
+        var text_div = $("#overview-text");
+        var rating_div = $("#overview-rating")
+
+        img_el.attr("src", poster)
+        
+        text_div.css({"display":"block"})
+        text_div.html(
+            "Title : " + title + "<br><br>" + 
+            "Year Released : " + released + "<br><br>" + 
+            "Runtime : " + runtime + "<br><br>" + 
+            "Genres : " + genres + "<br><br>" + 
+            "Synopsis : " + synopsis
+        )
+        console.log(rating_div)
+        $(".overview-rating-bar").css({ "width": (imdb * 8) + "%" })
+        $("#overview-score").text(imdb)
+
+        
     }
+}
+
+
+async function search() {
+    var res = $("#search-bar").val();
+
+    if ($("#graph-div").hasClass("active-menu")) {
+        
+        if (trend.movie_exists(res)) {
+            currQuery = res
+            await loading_screen(draw, currQuery)
+        }
+        else {
+            $(".chart").css({ "display": "none" })
+            $(".default-res").css({ "display": "none" })
+            $(".no-result").css({ "display": "block" })
+        }
+    }
+    else
+    {
+        draw_overview(res)
+    }
+    
     $("#search-bar").val("")
 }
 
@@ -403,34 +459,90 @@ function search_suggestions(string) {
         suggestion_list.css({ "display": "none" })
     }
 }
-async function prep()
+async function draw_week_movies()
 {
     await trend.get_curr_movies();
     draw_top_week()
     draw_worst_week()
-    await draw(currQuery)
 }
 $(document).ready(async function () {
     
     currQuery = ""
-    $("#search-bar").prop("value", currQuery)
-    await loading_screen(prep);
+    $("#search-bar").prop("value", currQuery);
 
-    window.addEventListener("resize", function () { draw(currQuery) })
-    window.addEventListener("load", () => { $("#search-bar").val("") })
+    await loading_screen(draw_overview, currQuery)
+
+    window.addEventListener("resize", function () { if ($("#graph-div").hasClass("active-menu")) { draw(currQuery) } })
 
     await $("#search-button").on("click", search);
-    $("#search-bar").on("input focus", (e) =>
-    {
+    $("#search-bar").on("input focus", (e) => {
         search_suggestions($(e.target).val());
     })
+
+    $("#hamburger-circle").on("click", () => {
+        if ($("#hamburger-circle").hasClass("is-active")) {
+            $("#hamburger-circle").removeClass("is-active")
+
+            
+            $("#sidebar-div").css({ "width": "0"})
+            $("#sidebar-div").css({ "left": "calc(100%)" })
+            $("#sidebar-item-container").css({"display":"none"})
+            
+        }
+        else {
+            $("#hamburger-circle").addClass("is-active")
+
+            $("#sidebar-div").css({ "width": "20rem"})
+            $("#sidebar-div").css({ "left": "calc(100% - 20rem)" })
+            $("#sidebar-item-container").css({"display":"flex"})
+        }
+        
+    })
+
+    $(".sidebar-item").on("click", (e) => {
+        var clicked = $(e.currentTarget).prop("id")
+        var graph_menu = $("#movie-trend");
+        var mow_menu = $("#movie-of-week");
+        var overview_menu = $("#movie-overview-div")
+        
+        graph_menu.removeClass("active-menu")
+        mow_menu.removeClass("active-menu")
+        overview_menu.removeClass("active-menu")
+        $("div").remove(".week-entry-div"); //reset weekly movie rows
+
+
+        currMenu.css({"display": "none"})
+
+        if (clicked == "movie-overview") {
+            overview_menu.addClass("active-menu")
+            currMenu = overview_div
+        }
+        else if (clicked == "movie-trend") {
+            graph_menu.addClass("active-menu")
+            currMenu = graph_div
+            
+        }
+        else if (clicked == "movie-of-week") {
+            mow_menu.addClass("active-menu")
+            currMenu = mow_div
+            loading_screen(draw_week_movies)
+        }
+
+        currMenu.css({ "display": "flex" });
+    })
+
 
     $("body").on('click', (e) =>
     {
         if (!($(e.target).is("#search-bar") || $(e.target).is("#search-suggestion-list")))
         {
             $("#search-suggestion-list").empty();
-            $("#search-suggestion-list").css({"display":"none"})
+            $("#search-suggestion-list").css({ "display": "none" })
+        }
+
+        if (!(($(e.target).is("#sidebar-div")) || ($(e.target).is("#hamburger-circle")) || ($(e.target).is("#hamburger-div")) || ($(e.target).is("#hamburger-circle > span"))) && $("#hamburger-circle").hasClass("is-active"))
+        {
+            $("#hamburger-circle").click();
         }
     })
 });

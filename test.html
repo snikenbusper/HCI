@@ -17,6 +17,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jmespath/0.14.0/jmespath.min.js"></script>
     </head>
     <body>
+
         <div id="loading-screen" style="display:none">
             <div id="loading-circle-div">
                 <div class="loading-circle">
@@ -48,35 +49,80 @@
             </div>
             <div id="hamburger-div">
                 <div id="hamburger-circle">
-                    
+                    <span></span>
                 </div>
             </div>
         </div>
+
+
+        <div id="sidebar-div">
+            <div id="sidebar-item-container">
+                <div class="sidebar-item" id="movie-overview">
+                    <p class="sidebar-text">Movie Overview</p>
+                </div>    
+                <div class="sidebar-item active-menu" id="movie-trend">
+                    <p class="sidebar-text">Movie Trend</p>
+                </div>
+                <div class="sidebar-item" id="movie-of-week">
+                    <p class="sidebar-text">Movies of the Week</p>
+                </div>
+            </div>
+        </div>
+
+        
         <div id="content-div">
+            <div id="movie-overview-div" style="display:flex">
+                <div class="overview-div" id="overview-poster-div">
+                    <img class="movie-overview-poster">
+                </div>
+                <div id="overview-text-div">
+                    <div class="overview-div" id="overview-text">
+
+                    </div>
+                    <div class="overview-div" id="overview-rating">
+                        <div class="overview-rating-bar">
+                        </div>
+                        <div class="overview-rating-bar-empty">
+                        </div>
+                        <p id="overview-score"></p>
+                    </div>
+                </div>
+                <div class="default-res" style="display:none">
+                    Search for something to get started
+                </div>
+                <div class="no-result" style="display:none">
+                    No movie found in our database
+                </div>
+            </div>
+
+
+            <div id="graph-div" style="display:none">
+                <div class="default-res" style="display:none">
+                    Search for something to get started
+                </div>
+                <div class="no-result" style="display:none">
+                    No movie found in our database
+                </div>
+                <div class="graph chart" id="line-graph">
+    
+                </div>
+                <div class="graph chart" id="cloropleth">
+    
+                </div>
+            </div>
+
+            <div id="mow-div" style="display:none">
+                <div class="graph " id="top-week">
+                    <p class="week-title">Top Movies Currently Showing</p>
+                </div>
+                <div class="graph" id="worst-week">
+                    <p class="week-title">Worst Movies Currently Showing</p>
+                </div>
+            </div>
 
         </div>
-        <div id="graph-div">
-            <div id="no-graph" style="display:none">
-                Search for something to get started
-            </div>
-            <div id="no-result" style="display:none">
-                No movie found
-            </div>
-            <div class="graph chart" id="line-graph">
-
-            </div>
-            <div class="graph chart" id="cloropleth">
-
-            </div>
-        </div>
-        <div id="mow-div">
-            <div class="graph " id="top-week">
-                <p class="week-title">Top Movies Currently Showing</p>
-            </div>
-            <div class="graph" id="worst-week">
-                <p class="week-title">Worst Movies Currently Showing</p>
-            </div>
-        </div>
+        
+        
     </body>
     <script type="text/javascript" src="./geo_interest.js"></script>
     <script type="text/javascript" src="./geo.js"></script>
