@@ -1,6 +1,6 @@
 const trend = new Trend()
 
-
+var menu_div = $("#menu-div")
 var graph_div = $("#graph-div")
 var mow_div = $("#mow-div")
 var overview_div = $("#movie-overview-div")
@@ -354,11 +354,12 @@ async function draw(movie) {
     }
     else
     {
-        $(".chart").css({ "display": "block" })
+        $(".chart").css({ "display": "flex" })
         $(".default-res").css({ "display": "none" })
         $(".no-result").css({ "display": "none" })
         
         await sleep(1000)
+        $("#trend-title").text(movie);
         draw_map(movie)
         draw_line(movie)
         await sleep(1000);
@@ -444,6 +445,7 @@ async function search() {
     }
     
     $("#search-bar").val("")
+    currQuery = "";
 }
 
 
@@ -516,8 +518,9 @@ $(document).ready(async function () {
         mow_menu.removeClass("active-menu")
         overview_menu.removeClass("active-menu")
         $("div").remove(".week-entry-div"); //reset weekly movie rows
-
-
+        $("#search-div").css({ "display": "flex" })
+        menu_div.css({"justify-content" : "space-around"})
+        
         currMenu.css({ "display": "none" })
 
         if (clicked == "movie-overview") {
@@ -532,6 +535,8 @@ $(document).ready(async function () {
         }
         else if (clicked == "movie-of-week") {
             mow_menu.addClass("active-menu")
+            $("#search-div").css({ "display": "none" })
+            menu_div.css({"justify-content" : "space-between"})
             currMenu = mow_div
             loading_screen(draw_week_movies)
         }
