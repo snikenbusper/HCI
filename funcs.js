@@ -3,7 +3,7 @@ const trend = new Trend()
 
 var graph_div = $("#graph-div")
 var mow_div = $("#mow-div")
-var overview_div = $("movie-overview-div")
+var overview_div = $("#movie-overview-div")
 var currQuery = "";
 var currMenu = overview_div;
 
@@ -66,9 +66,8 @@ function draw_line(movie)
     svg = svg.append("g")
         .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
     
-    
+    console.log(movie)
     var data = trend.get_interest_over_time(movie)
-
     var timeFormat = d3.timeFormat("%Y");
 
     const y = d3.scaleLinear().range([height - margin.v, 0]).domain([Math.min(...data.map(d=>d[1])), Math.max(...data.map(d=>d[1]))])
@@ -272,7 +271,6 @@ function draw_top_week()
     var top_week_div = $("#top-week")
                 
     var movies = trend.get_top_week(3)
-    console.log(movies)
     for (let i = 0; i < 3; i++)
     {
         top_week_div.append(`
@@ -360,6 +358,7 @@ async function draw(movie) {
         $(".default-res").css({ "display": "none" })
         $(".no-result").css({ "display": "none" })
         
+        await sleep(1000)
         draw_map(movie)
         draw_line(movie)
         await sleep(1000);
@@ -384,7 +383,6 @@ async function draw_overview(movie)
         $(".no-result").css({ "display": "none" })
         
         var res = await trend.get_movie_overview(movie)
-        console.log(res)
         var title = res["Title"]
         var poster = res["Poster"]
         var released = res["Released"]
@@ -407,11 +405,10 @@ async function draw_overview(movie)
             "Genres : " + genres + "<br><br>" + 
             "Synopsis : " + synopsis
         )
-        console.log(rating_div)
         $(".overview-rating-bar").css({ "width": (imdb * 8) + "%" })
         $("#overview-score").text(imdb)
 
-        
+        await sleep(500)
     }
 }
 
@@ -419,10 +416,11 @@ async function draw_overview(movie)
 async function search() {
     var res = $("#search-bar").val();
 
-    if ($("#graph-div").hasClass("active-menu")) {
+    if ($("#movie-trend").hasClass("active-menu")) {
         
         if (trend.movie_exists(res)) {
             currQuery = res
+            console.log("boom")
             await loading_screen(draw, currQuery)
         }
         else {
@@ -433,7 +431,16 @@ async function search() {
     }
     else
     {
-        draw_overview(res)
+        if (trend.movie_exists(res)) {
+            currQuery = res
+            await loading_screen(draw_overview, currQuery)
+        }
+        else {
+            $("#overview-text-div").css({ "display": "none" })
+            $("#overview-poster-div").css({ "display": "none" })
+            $(".default-res").css({ "display": "none" })
+            $(".no-result").css({ "display": "block" })
+        }
     }
     
     $("#search-bar").val("")
@@ -472,7 +479,7 @@ $(document).ready(async function () {
 
     await loading_screen(draw_overview, currQuery)
 
-    window.addEventListener("resize", function () { if ($("#graph-div").hasClass("active-menu")) { draw(currQuery) } })
+    window.addEventListener("resize", function () { if ($("#movie-trend").hasClass("active-menu")) { draw(currQuery) } })
 
     await $("#search-button").on("click", search);
     $("#search-bar").on("input focus", (e) => {
@@ -503,7 +510,7 @@ $(document).ready(async function () {
         var clicked = $(e.currentTarget).prop("id")
         var graph_menu = $("#movie-trend");
         var mow_menu = $("#movie-of-week");
-        var overview_menu = $("#movie-overview-div")
+        var overview_menu = $("#movie-overview")
         
         graph_menu.removeClass("active-menu")
         mow_menu.removeClass("active-menu")
@@ -511,16 +518,17 @@ $(document).ready(async function () {
         $("div").remove(".week-entry-div"); //reset weekly movie rows
 
 
-        currMenu.css({"display": "none"})
+        currMenu.css({ "display": "none" })
 
         if (clicked == "movie-overview") {
             overview_menu.addClass("active-menu")
             currMenu = overview_div
+            loading_screen(draw_overview, currQuery);
         }
         else if (clicked == "movie-trend") {
             graph_menu.addClass("active-menu")
             currMenu = graph_div
-            
+            loading_screen(draw, currQuery);
         }
         else if (clicked == "movie-of-week") {
             mow_menu.addClass("active-menu")

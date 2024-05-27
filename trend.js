@@ -19,7 +19,6 @@ class Trend
 
     movie_exists(movie)
     {
-        console.log(movie.toLowerCase())
         return this.all_movies_lowercase.includes(movie.toLowerCase())
     }
 
@@ -50,7 +49,6 @@ class Trend
             return res;
         } catch (error)
         {
-            console.log(error)
             alert("Something went wrong when getting movie data")
         }
 
