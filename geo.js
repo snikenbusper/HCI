@@ -186,7 +186,7 @@ class Geo
     constructor()
     {
         this.json_data = JSON.parse(geoData)
-        var google_names = Object.keys(JSON.parse(geo_interest)["Black Panther Movie"])
+        var google_names = Object.keys(JSON.parse(geo_interest)["Past Lives"])
         this.map_country_names = this.json_data["features"].map(x => x["properties"]["name"])
         this.country_names = []
         this.geo_interest = JSON.parse(geo_interest)
