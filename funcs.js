@@ -163,7 +163,7 @@ function draw_line(movie)
     svg.append("path")
         .datum(data)
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "#59A7FF")
         .attr("stroke-width", 2)
         .attr("d", line)
 
@@ -406,7 +406,7 @@ async function draw_overview(movie)
             "Genres : " + genres + "<br><br>" + 
             "Synopsis : " + synopsis
         )
-        $(".overview-rating-bar").css({ "width": (imdb * 8) + "%" })
+        $(".overview-rating-bar").css({ "width": (imdb * 4) + "%" })
         $("#overview-score").text(imdb)
 
         await sleep(500)
@@ -444,8 +444,6 @@ async function search() {
         }
     }
     
-    $("#search-bar").val("")
-    currQuery = "";
 }
 
 
@@ -544,7 +542,6 @@ $(document).ready(async function () {
         currMenu.css({ "display": "flex" });
     })
 
-
     $("body").on('click', (e) =>
     {
         if (!($(e.target).is("#search-bar") || $(e.target).is("#search-suggestion-list")))
@@ -557,5 +554,15 @@ $(document).ready(async function () {
         {
             $("#hamburger-circle").click();
         }
+    })
+
+    $("#to-trend-btn").on("click", () =>
+    {
+        $("#movie-overview").removeClass("active-menu")
+        $("#movie-trend").addClass("active-menu")
+        currMenu.css({ "display": "none" })
+        currMenu = graph_div
+        loading_screen(draw, currQuery);
+        currMenu.css({ "display": "flex" });
     })
 });
