@@ -35,7 +35,7 @@ class Trend
     async get_movie_overview(movie)
     {
         //http://www.omdbapi.com/?apikey=[yourkey]&
-        const url = "http://www.omdbapi.com/?apikey=7f65a9b3&t=" + movie
+        const url = "https://www.omdbapi.com/?apikey=7f65a9b3&t=" + movie
         const options =
             {   
                 methodP:'GET'
