@@ -89,6 +89,9 @@ class Trend
 
     async get_curr_movies()
     {
+
+        //951a8b8fcamsh0576953f6630afbp158694jsnad91e8ccfebd
+        //spare key
         const url = 'https://moviesverse1.p.rapidapi.com/top-box-office';
         const options = {
             method: 'GET',
