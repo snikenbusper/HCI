@@ -5,8 +5,9 @@ var graph_div = $("#graph-div")
 var mow_div = $("#mow-div")
 var overview_div = $("#movie-overview-div")
 var news_div = $("#news-div")
+var show_all_div = $("#show-all-div")
 var currQuery = "";
-var currMenu = overview_div;
+var currMenu = mow_div;
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -67,7 +68,6 @@ function draw_line(movie)
     svg = svg.append("g")
         .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
     
-    console.log(movie)
     var data = trend.get_interest_over_time(movie)
     var timeFormat = d3.timeFormat("%Y");
 
@@ -416,7 +416,56 @@ async function draw_overview(movie)
 
 async function draw_all()
 {
-    
+    var res = await trend.get_all();
+    show_all_div.empty();
+    res.forEach((r) =>
+    {
+        show_all_div.append(`
+            <div class="sa-item">
+                <div class="sa-poster-div">
+                    <img class="sa-poster">
+                </div>
+                <div class="sa-title-div">
+                    <p class="sa-title"></p>
+                </div>
+                <div class="sa-rating-div">
+                    <div class="sa-rating-bar-empty"></div>
+                    <div class="sa-rating-bar"></div>
+                    <p class="sa-rating"></p>
+                </div>
+            </div>
+        `)
+        
+    })
+
+    let i = 0;
+    show_all_div.children("div[class='sa-item']").each(function () {
+        var entry = $(this)
+        var img_container = $($(entry.children()[0]).children()[0])
+        var title_container = $($(entry.children()[1]).children()[0])
+        var rating_container = $(entry.children()[2])
+
+
+        img_container.attr("src", res[i]["poster"])
+        title_container.text(res[i]["title"])
+        $(rating_container.children()[1]).css({"width":res[i]["rating"]*7+"%"})
+        $(rating_container.children()[2]).text(res[i]["rating"])
+        i++;
+    })
+
+    $(".sa-item").on("click", (e) =>
+    {
+        let current = $(e.delegateTarget)
+        let movie = $($(current.children()[1]).children()[0]).html()
+        $("#show-all").removeClass("active-menu")
+        $("#movie-overview").addClass("active-menu")
+        currMenu.css({ "display": "none" })
+        currMenu = overview_div
+        loading_screen(draw_overview, movie);
+        currMenu.css({ "display": "flex" });
+        
+    })
+
 }
 
 
@@ -476,7 +525,6 @@ async function search() {
         
         if (trend.movie_exists(res)) {
             currQuery = res
-            console.log("boom")
             await loading_screen(draw, currQuery)
         }
         else {
@@ -536,7 +584,10 @@ $(document).ready(async function () {
     currQuery = ""
     $("#search-bar").prop("value", currQuery);
 
-    await loading_screen(draw_overview, currQuery)
+
+    $("#search-div").css({ "display": "none" })
+    menu_div.css({ "justify-content": "space-between" })
+    await loading_screen(draw_week_movies)
 
     window.addEventListener("resize", function () { if ($("#movie-trend").hasClass("active-menu")) { draw(currQuery) } })
 
@@ -571,11 +622,13 @@ $(document).ready(async function () {
         var mow_menu = $("#movie-of-week");
         var overview_menu = $("#movie-overview")
         var news_menu = $("#movie-news")
+        var show_all_menu = $("#show-all")
         
         graph_menu.removeClass("active-menu")
         mow_menu.removeClass("active-menu")
         overview_menu.removeClass("active-menu")
         news_menu.removeClass("active-menu")
+        show_all_menu.removeClass("active-menu")
         $("div").remove(".week-entry-div"); //reset weekly movie rows
         $("#search-div").css({ "display": "flex" })
         menu_div.css({"justify-content" : "space-around"})
@@ -598,6 +651,14 @@ $(document).ready(async function () {
             menu_div.css({ "justify-content": "space-between" })
             currMenu = mow_div
             loading_screen(draw_week_movies)
+        }
+        else if (clicked == "show-all")
+        {
+            show_all_menu.addClass("active-menu")
+            $("#search-div").css({ "display": "none" })
+            menu_div.css({ "justify-content": "space-between" })
+            currMenu = show_all_div
+            loading_screen(draw_all)
         }
         else if (clicked == "movie-news")
         {

@@ -57,7 +57,10 @@
 
         <div id="sidebar-div">
             <div id="sidebar-item-container">
-                <div class="sidebar-item active-menu" id="movie-overview">
+                <div class="sidebar-item active-menu" id="movie-of-week">
+                    <p class="sidebar-text">Movies of the Week</p>
+                </div>
+                <div class="sidebar-item" id="movie-overview">
                     <p class="sidebar-text">Movie Overview</p>
                 </div>    
                 <div class="sidebar-item" id="movie-trend">
@@ -65,10 +68,7 @@
                 </div>
                 <div class="sidebar-item" id="show-all">
                     <p class="sidebar-text">Show Movie Database</p>
-                </div>
-                <div class="sidebar-item" id="movie-of-week">
-                    <p class="sidebar-text">Movies of the Week</p>
-                </div>
+                </div>     
                 <div class="sidebar-item" id="movie-news">
                     <p class="sidebar-text">Movies News</p>
                 </div>
@@ -77,7 +77,7 @@
 
         
         <div id="content-div">
-            <div id="movie-overview-div" style="display:flex">
+            <div id="movie-overview-div" style="display:none">
                 <div class="overview-div" id="overview-poster-div" style="display:none">
                     <img class="movie-overview-poster">
                 </div>
@@ -129,7 +129,7 @@
                 </div>
             </div>
 
-            <div id="mow-div" style="display:none">
+            <div id="mow-div" style="display:flex">
                 <div class="graph " id="top-week">
                     <p class="week-title">Top Movies Currently Showing</p>
                 </div>

@@ -4,7 +4,7 @@ class Trend
     {
         this.geo = new Geo()
         this.time_data = JSON.parse(time_data)
-        this.all_movies = Object.keys(this.time_data)
+        this.all_movies = Object.keys(this.time_data).sort()
         this.all_movies_lowercase = this.all_movies.map(s => { return s.toLowerCase() })
         this.geo_data = this.geo.country_names
     }
@@ -30,6 +30,39 @@ class Trend
     get_geo(movie)
     {
         return this.geo.search_movie(movie) 
+    }
+
+    async get_all()
+    {
+        var res = []
+
+        for (let i = 0; i < this.all_movies.length; i++)
+        {
+            var temp = {}
+
+            const url = "https://www.omdbapi.com/?apikey=7f65a9b3&t=" + this.all_movies[i]
+            const options =
+            {   
+                    methodP:'GET'
+            }
+            
+            try {
+                const response = await fetch(url, options)
+                const result = await response.text()
+                var parsed_res = JSON.parse(result)
+            } catch (error)
+            {
+                alert("Something went wrong when getting movie data")
+                continue;
+            }
+
+            temp["title"] = parsed_res["Title"]
+            temp["poster"] = parsed_res["Poster"]
+            temp["rating"] = parsed_res["imdbRating"]
+            res.push(temp);
+        }
+
+        return res;
     }
 
     async get_movie_overview(movie)
