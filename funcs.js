@@ -4,6 +4,7 @@ var menu_div = $("#menu-div")
 var graph_div = $("#graph-div")
 var mow_div = $("#mow-div")
 var overview_div = $("#movie-overview-div")
+var news_div = $("#news-div")
 var currQuery = "";
 var currMenu = overview_div;
 
@@ -413,6 +414,60 @@ async function draw_overview(movie)
     }
 }
 
+async function draw_all()
+{
+    
+}
+
+
+var news_count = 4
+async function draw_news() {
+    var news = await trend.get_news(news_count);
+    news_div.empty();
+    for (let i = 0; i < news.length; i++) {
+        news_div.append(`   
+        <div class="news-item-div">
+            <div class="news-poster-div">
+                <img class="news-poster">
+            </div>        
+            <div class="news-text-div">
+                <p class="news-title"></p>
+                <p class="news-link"></p>
+            </div>
+        </div>
+        `)
+    }
+
+    let i = 0
+    news_div.children("div[class='news-item-div']").each(function ()
+    {
+        var entry = $(this)
+        var img_container = $($(entry.children()[0]).children()[0])
+        var title_container = $($(entry.children()[1]).children()[0])
+        var link_container = $($(entry.children()[1]).children()[1])
+
+
+        img_container.attr("src", news[i]["image"])
+        title_container.text(news[i]["title"])
+        link_container.html("<a href = \"" + news[i]["link"] + "\">Visit Link</a>")
+
+        i++;
+    })
+
+    news_div.append(`
+        <div id="show-more-news-div">
+            <div id="show-more-news-btn"> <p> Show More </p> </div>
+        </div>
+    `)
+
+    $("#show-more-news-btn").on("click", () =>
+    {
+        news_count += 4;
+        loading_screen(draw_news);
+    })
+
+   
+}
 
 async function search() {
     var res = $("#search-bar").val();
@@ -466,12 +521,16 @@ function search_suggestions(string) {
         suggestion_list.css({ "display": "none" })
     }
 }
+
+
 async function draw_week_movies()
 {
     await trend.get_curr_movies();
     draw_top_week()
     draw_worst_week()
 }
+
+
 $(document).ready(async function () {
     
     currQuery = ""
@@ -511,10 +570,12 @@ $(document).ready(async function () {
         var graph_menu = $("#movie-trend");
         var mow_menu = $("#movie-of-week");
         var overview_menu = $("#movie-overview")
+        var news_menu = $("#movie-news")
         
         graph_menu.removeClass("active-menu")
         mow_menu.removeClass("active-menu")
         overview_menu.removeClass("active-menu")
+        news_menu.removeClass("active-menu")
         $("div").remove(".week-entry-div"); //reset weekly movie rows
         $("#search-div").css({ "display": "flex" })
         menu_div.css({"justify-content" : "space-around"})
@@ -534,9 +595,18 @@ $(document).ready(async function () {
         else if (clicked == "movie-of-week") {
             mow_menu.addClass("active-menu")
             $("#search-div").css({ "display": "none" })
-            menu_div.css({"justify-content" : "space-between"})
+            menu_div.css({ "justify-content": "space-between" })
             currMenu = mow_div
             loading_screen(draw_week_movies)
+        }
+        else if (clicked == "movie-news")
+        {
+            news_menu.addClass("active-menu")
+            $("#search-div").css({ "display": "none" })
+            menu_div.css({ "justify-content": "space-between" })
+            currMenu = news_div
+            news_count = 4;
+            loading_screen(draw_news)
         }
 
         currMenu.css({ "display": "flex" });

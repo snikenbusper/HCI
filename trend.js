@@ -74,6 +74,27 @@ class Trend
         }
     }
 
+    async get_news(amnt)
+    {
+        const url = 'https://moviesverse1.p.rapidapi.com/get-movie-news';
+        const options = {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Key': 'f6919426dfmshe6742c4699ee369p1753a1jsn489031a4b128',
+                'X-RapidAPI-Host': 'moviesverse1.p.rapidapi.com'
+            }
+        };
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.text();
+            const res = JSON.parse(result);
+            return res["news"].slice(0, amnt)
+        } catch (error) {
+            alert("Problem getting news")
+        }
+    }
+
     get_top_week(top_x)
     {
         var movies = this.current_showing.movies
