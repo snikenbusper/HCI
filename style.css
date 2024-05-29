@@ -546,8 +546,9 @@
     width:100%;
     display:flex;
     flex-direction:row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    flex-wrap:wrap;
 }
 
     .overview-div
@@ -561,9 +562,9 @@
     #overview-poster-div
     {
         position:relative;
-        margin-left:2%;
-        height:90%;
-        width:25%;
+        margin:2rem;
+        height:25rem;
+        width:17rem;
         display:flex;
         justify-content: center;
         align-items: center;
@@ -580,8 +581,9 @@
     {
         position:relative;
         margin-right:2%;
-        height:90%;
-        width:70%;
+        height:25rem;
+        width:47rem;
+        margin:1rem;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
