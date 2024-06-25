@@ -80,8 +80,8 @@
     justify-content: space-around;
     align-items: center;
     background-color: white;
-    box-shadow: 0 2px 2px 2px rgb(189, 189, 189);
     z-index: 2;
+    box-shadow: 0px 20px 50px rgba(220, 224, 249, 0.5);
 }
     #logo-div
     {
@@ -327,6 +327,7 @@
     display:flex;
     flex-direction:column;
     justify-content: space-around;
+    align-items: center;
 }
 .graph
 {
@@ -338,11 +339,14 @@
     #trend-title-container
     {
         position:relative;
-        width:100%;
+        width:fit-content;
+        padding: 0 1rem;
         height:10%;
         display:flex;
         justify-content: center;
         align-items: center;
+        background-color: white;
+        border-radius: 10px;
     }
         #trend-title
         {
@@ -355,6 +359,10 @@
             font-weight: 800;
             color:#59A7FF;
 
+        }  
+        #trend-title>span {
+            background-color: white;
+            line-height: 2
         }
     #graph-container
     {
@@ -389,7 +397,9 @@
     width:fit-content;
     margin:auto;
     position:relative;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    font-size:1.25rem;
+    font-weight:800;
     font-family: Arial, Helvetica, sans-serif;
 }
 .no-result
@@ -398,7 +408,9 @@
     width:fit-content;
     margin:auto;
     position:relative;
-    color: rgba(0, 0, 0, 0.5);
+    color: rgb(255, 255, 255);
+    font-size:1.25rem;
+    font-weight:800;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -584,6 +596,7 @@
         height:25rem;
         width:47rem;
         margin:1rem;
+        padding-bottom:3rem;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -925,13 +938,30 @@ button
     top:0;
 }
 
+#footer-div
+{
+    position:relative;
+    width:100%;
+    height:fit-content;
+}
+    #footer
+    {
+        position:relative;
+        width:100%;
+
+    }
+
 body
 {
     margin: 0;
     position:relative;
     display:flex;
     flex-direction: column;
-    background-color: #f4f4f4;
+    /*background-color: #f4f4f4;*/
+    background-image: url("bg.jpg");
+    background-repeat: no-repeat;
+    background-size:cover;
+    backdrop-filter:blur(3px);
     height:100%;
     min-height: fit-content;
     width:100%;

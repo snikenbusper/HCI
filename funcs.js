@@ -69,13 +69,14 @@ function draw_line(movie)
         .attr("transform", `translate(${margin.h / 2}, ${margin.v / 2})`)
     
     var data = trend.get_interest_over_time(movie)
-    var timeFormat = d3.timeFormat("%Y");
-
+    var timeFormat = d3.timeFormat("%B %Y");
+    console.log("line")
+    console.log(data)
     const y = d3.scaleLinear().range([height - margin.v, 0]).domain([Math.min(...data.map(d=>d[1])), Math.max(...data.map(d=>d[1]))])
     const x = d3.scaleTime().range([0, width - margin.h]).domain([Math.min(...data.map(d=>d[0])), Math.max(...data.map(d=>d[0]))]).nice()
 
     svg.append("g")
-        .call(d3.axisBottom(x).ticks(10, timeFormat))
+        .call(d3.axisBottom(x).ticks(6, timeFormat))
         .attr("transform", `translate(0, ${height - (margin.v)})`)
 
     svg.append("g")
@@ -460,7 +461,9 @@ async function draw_all()
         $("#show-all").removeClass("active-menu")
         $("#movie-overview").addClass("active-menu")
         currMenu.css({ "display": "none" })
+        $("#search-div").css({ "display": "flex" })
         currMenu = overview_div
+        overview_menu.addClass("active-menu")
         loading_screen(draw_overview, movie);
         currMenu.css({ "display": "flex" });
         
