@@ -379,7 +379,6 @@ async function draw_overview(movie)
     }
     else
     {
-
         $("#overview-text-div").css({ "display": "flex" })
         $("#overview-poster-div").css({ "display": "flex" })
         $(".default-res").css({ "display": "none" })
@@ -463,7 +462,6 @@ async function draw_all()
         currMenu.css({ "display": "none" })
         $("#search-div").css({ "display": "flex" })
         currMenu = overview_div
-        overview_menu.addClass("active-menu")
         loading_screen(draw_overview, movie);
         currMenu.css({ "display": "flex" });
         
