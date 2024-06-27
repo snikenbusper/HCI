@@ -13,7 +13,7 @@ class Trend
     {
         var obj = this.time_data[movie]
         var res = Object.entries(obj)
-        res = res.filter((d) => { return new Date(parseInt(d[0])) >= new Date('2023-01-01') })
+        res = res.filter((d) => { return new Date(parseInt(d[0])) >= new Date('2023-04-01') })
         res.forEach((d) => { d[0] = new Date(parseInt(d[0])) })
         return res
     }
