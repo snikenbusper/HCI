@@ -52,6 +52,11 @@ async function loading_screen(func, args)
     
 }
 
+function arrow_to_search_bar()
+{
+    
+}
+
 function draw_line(movie)
 {
     $("#svg-line-graph").remove()
@@ -596,6 +601,12 @@ $(document).ready(async function () {
     $("#search-bar").on("input focus", (e) => {
         search_suggestions($(e.target).val());
     })
+    $("#search-bar").on('keyup', function (e) {
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            search();
+        }
+    });
+    
 
     $("#hamburger-circle").on("click", () => {
         if ($("#hamburger-circle").hasClass("is-active")) {
