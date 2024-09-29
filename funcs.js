@@ -305,7 +305,7 @@ function draw_top_week()
         var score = parseFloat(movies[i].imdbRating.split(' ')[0])
         var width = score * 9
         
-        img.attr("src", movies[i].posterImage)
+        img.attr("src", movies[i].image)
         title.text(movies[i].title)
         bar_div.css({ "width": width.toString() + '%' })
         score_text.text(score.toString())
@@ -345,7 +345,7 @@ function draw_worst_week()
         var score = parseFloat(movies[i].imdbRating.split(' ')[0])
         var width = score * 9
         
-        img.attr("src", movies[i].posterImage)
+        img.attr("src", movies[i].image)
         title.text(movies[i].title)
         bar_div.css({ "width": width.toString() + '%' })
         score_text.text(score.toString())
